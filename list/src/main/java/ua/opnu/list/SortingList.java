@@ -10,13 +10,10 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
-import javafx.scene.layout.Background;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
-import java.util.Comparator;
 
 /*
  * Цей клас успадковується від стандартного класу Application.
@@ -115,22 +112,48 @@ public class SortingList extends Application {
         sortByLastNameButton.setMaxWidth(Double.MAX_VALUE);
         sortByMarkButton.setMaxWidth(Double.MAX_VALUE);
 
-        // Обробка натискання кнопки за допомогою об'єкта анонімного класу,
-        // реалізує інтерфейс Comparable
+        // --- ВОТ РЕШЕНИЕ (и для доп. задания) ---
 
-        final boolean[] order = {true};
+        // Создаем НЕЗАВИСИМЫЕ флаги для КАЖДОЙ кнопки
+        // (Используем трюк с массивом, чтобы переменную можно было
+        // изменять внутри анонимного класса)
+        final boolean[] nameOrder = {true};
+        final boolean[] lastNameOrder = {true};
+        final boolean[] markOrder = {true};
 
+
+        // Обробка натискання кнопки за ім'ям
         sortByNameButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                students.sort(new NameSorter(order[0]));
-                order[0] = !order[0];
+                // Используем флаг nameOrder
+                students.sort(new NameSorter(nameOrder[0]));
+                // Инвертируем флаг (true -> false, false -> true)
+                nameOrder[0] = !nameOrder[0];
             }
         });
 
-        // TODO: Обробка натискання на кнопку "Сортувати за прізвищем"
+        // Обробка натискання на кнопку "Сортувати за прізвищем"
+        sortByLastNameButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                // Используем флаг lastNameOrder
+                students.sort(new LastNameSorter(lastNameOrder[0]));
+                lastNameOrder[0] = !lastNameOrder[0];
+            }
+        });
 
-        // TODO: Обробка натискання на кнопку "Сортувати за оцінкою"
+        // Обробка натискання на кнопку "Сортувати за оцінкою"
+        sortByMarkButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                // Используем флаг markOrder
+                students.sort(new AverageGradeSorter(markOrder[0]));
+                markOrder[0] = !markOrder[0];
+            }
+        });
+        // --- КОНЕЦ РЕШЕНИЯ ---
+
 
         // Створюємо горизонтальний ряд
         HBox hb = new HBox();
